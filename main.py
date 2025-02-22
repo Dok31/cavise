@@ -18,6 +18,8 @@ def perform_operation(operation_type: str, a: int, b: int):
         return lib.add(c_int(a), c_int(b))
     elif operation_type == "sub":
         return lib.sub(c_int(a), c_int(b))
+    elif operation_type == "mul":
+        return lib.mul(c_int(a), c_int(b))
 
 
 @app.post("/calc")
