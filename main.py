@@ -2,21 +2,29 @@ from fastapi import FastAPI
 from ctypes import CDLL, c_int
 from pydantic import BaseModel
 
-
 lib = CDLL('libcalc.so')
 
 app = FastAPI()
 
 
-class Numbers(BaseModel):
+class Operation(BaseModel):
+    type: str
     a: int
     b: int
 
 
-@app.post('/calc')
-async def calsc(numbers: Numbers):
-    result = lib.add(c_int(numbers.a), c_int(numbers.b))
-    return {'result': result}
+def perform_operation(operation_type: str, a: int, b: int):
+    if operation_type == "add":
+        return lib.add(c_int(a), c_int(b))
+    elif operation_type == "sub":
+        return lib.sub(c_int(a), c_int(b))
+
+
+@app.post("/calc")
+async def calc(operation: Operation):
+    result = perform_operation(operation.type, operation.a, operation.b)
+    return {"result": result}
+
 
 if __name__ == "__main__":
     import uvicorn
